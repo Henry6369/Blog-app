@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import GoogleAuth from '../Components/GoogleAuth';
 import {AiFillEyeInvisible, AiFillEye, AiOutlineMail} from 'react-icons/ai';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../Firebase-config';
 
 
 const initialState = {
@@ -28,6 +30,55 @@ const Login = ({setIsAuth}) => {
       setFormData({...formData, [e.target.name]: e.target.value});
     };
 
+
+    const validateForm = () => {
+      let newErrors = {};
+     
+      // Validate email
+      if (!email) {
+        newErrors.email = 'Email is required';
+      } else if (!/\S+@\S+\.\S+/.test(email)) {
+        newErrors.email = 'Email is invalid';
+      }
+  
+      // Validate password
+      if (!password) {
+        newErrors.password = 'Password is required';
+      } else if (password.length < 6) {
+        newErrors.password = 'Password must be at least 6 characters long';
+      }
+  
+      setErrors(newErrors);
+  
+      // Return true if there are no errors
+      return Object.keys(newErrors).length === 0;
+    };
+  
+
+
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+  
+      if (validateForm()) {
+        try {
+          setLoading(true);
+            if( email && password ){
+            const {user} = await signInWithEmailAndPassword(
+              auth, email, password
+            )
+            setLoading(false);
+            localStorage.setItem('isAuth', true);
+            setIsAuth(true)
+            navigate('/')
+            }
+        } catch (error) {
+          console.log(error.message);
+          
+          setLoading(false);
+        }
+      }
+      
+    };
   
   return (
     <div className='pt-[20vh]'>
@@ -35,7 +86,7 @@ const Login = ({setIsAuth}) => {
     <div className='max-w-[800px] m-auto px-4 pb-16'>
       <div className=' dark:bg-[#e8edea] px-10 py-8 rounded-lg text-black'>
         <h1 className='text-2xl font-bold text-green-800'> Login Account </h1>
-        <form>
+        <form onSubmit={handleSubmit} >
 
           <div className='grid md:grid-cols-2 md:gap-8'>
 
@@ -86,7 +137,7 @@ const Login = ({setIsAuth}) => {
      
         <GoogleAuth setIsAuth={setIsAuth}/>
 
-        <p className='my-4'>Don't have an account? <Link className='text-[#986c55] underline' to={'/register'}>sign up</Link></p>
+        <p className='my-4'>Don't have an account? <Link className='text-[#986c55] underline' to={'/register'}> Register </Link></p>
       </div>
     </div>
   </div>
