@@ -4,6 +4,7 @@ import GoogleAuth from '../Components/GoogleAuth';
 import {AiFillEyeInvisible, AiFillEye, AiOutlineMail} from 'react-icons/ai';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../Firebase-config';
+import { toast } from "react-toastify";
 
 
 const initialState = {
@@ -68,12 +69,13 @@ const Login = ({setIsAuth}) => {
             )
             setLoading(false);
             localStorage.setItem('isAuth', true);
+             toast.success('Login successfully')
             setIsAuth(true)
             navigate('/')
             }
         } catch (error) {
           console.log(error.message);
-          
+          toast.error('Invalid credential');
           setLoading(false);
         }
       }
@@ -136,8 +138,9 @@ const Login = ({setIsAuth}) => {
         <hr className="my-6 border-gray-300 w-full" />
      
         <GoogleAuth setIsAuth={setIsAuth}/>
+        <p className='text-center text-sm py-1 '> Forgotten password? <span className='underline '> <Link to={'/reset'} className='text-[#3e3e8b] text-[15px]'>Reset</Link></span></p>
 
-        <p className='my-4'>Don't have an account? <Link className='text-[#986c55] underline' to={'/register'}> Register </Link></p>
+        <p className='my-4'>Don't have an account? <Link className='text-[#986c55] underline text-[15px]' to={'/register'}> Register </Link></p>
       </div>
     </div>
   </div>

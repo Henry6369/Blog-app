@@ -5,7 +5,7 @@ import {FaRegUser} from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import GoogleAuth from '../Components/GoogleAuth';
 import { auth } from '../../Firebase-config';
-
+import { toast } from 'react-toastify';
 
 
 const initialState = {
@@ -97,6 +97,7 @@ const Register = ({setIsAuth}) => {
                        auth, email, password
                      );
                      await updateProfile(user, {displayName: `${username}`})
+                     toast.success('signup successfully');
                      setLoading(false);
                      localStorage.setItem('isAuth', true);
                      setIsAuth(true);
@@ -104,6 +105,7 @@ const Register = ({setIsAuth}) => {
                      setLoading(false);
                     }  
                    } catch (error) {
+                        toast.error('user already exist');
                      console.error(error)
                      setLoading(false);
                    }
